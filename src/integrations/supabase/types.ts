@@ -14,16 +14,211 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clean_leads: {
+        Row: {
+          company: string | null
+          created_at: string | null
+          email: string
+          id: string
+          ingestion_timestamp: string | null
+          is_expired: boolean | null
+          job_id: string
+          name: string
+          phone: string
+          record_hash: string
+          source: string
+          status: Database["public"]["Enums"]["lead_status"] | null
+          updated_at: string | null
+          user_id: string
+          validation_notes: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          ingestion_timestamp?: string | null
+          is_expired?: boolean | null
+          job_id: string
+          name: string
+          phone: string
+          record_hash: string
+          source: string
+          status?: Database["public"]["Enums"]["lead_status"] | null
+          updated_at?: string | null
+          user_id: string
+          validation_notes?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          ingestion_timestamp?: string | null
+          is_expired?: boolean | null
+          job_id?: string
+          name?: string
+          phone?: string
+          record_hash?: string
+          source?: string
+          status?: Database["public"]["Enums"]["lead_status"] | null
+          updated_at?: string | null
+          user_id?: string
+          validation_notes?: string | null
+        }
+        Relationships: []
+      }
+      cleaning_jobs: {
+        Row: {
+          completed_at: string | null
+          confidence_score: number | null
+          created_at: string | null
+          duplicate_records: number | null
+          error_message: string | null
+          expired_records: number | null
+          filename: string
+          id: string
+          invalid_records: number | null
+          processed_records: number | null
+          source: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["job_status"] | null
+          suppressed_records: number | null
+          total_records: number | null
+          updated_at: string | null
+          user_id: string
+          valid_records: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          duplicate_records?: number | null
+          error_message?: string | null
+          expired_records?: number | null
+          filename: string
+          id?: string
+          invalid_records?: number | null
+          processed_records?: number | null
+          source: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["job_status"] | null
+          suppressed_records?: number | null
+          total_records?: number | null
+          updated_at?: string | null
+          user_id: string
+          valid_records?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          duplicate_records?: number | null
+          error_message?: string | null
+          expired_records?: number | null
+          filename?: string
+          id?: string
+          invalid_records?: number | null
+          processed_records?: number | null
+          source?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["job_status"] | null
+          suppressed_records?: number | null
+          total_records?: number | null
+          updated_at?: string | null
+          user_id?: string
+          valid_records?: number | null
+        }
+        Relationships: []
+      }
+      dnc_list: {
+        Row: {
+          added_at: string | null
+          added_by: string | null
+          email: string | null
+          id: string
+          phone: string | null
+          reason: string | null
+        }
+        Insert: {
+          added_at?: string | null
+          added_by?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          reason?: string | null
+        }
+        Update: {
+          added_at?: string | null
+          added_by?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          reason?: string | null
+        }
+        Relationships: []
+      }
+      raw_leads: {
+        Row: {
+          company: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          ingestion_timestamp: string | null
+          job_id: string
+          name: string | null
+          phone: string | null
+          record_hash: string | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          ingestion_timestamp?: string | null
+          job_id: string
+          name?: string | null
+          phone?: string | null
+          record_hash?: string | null
+          source: string
+          user_id: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          ingestion_timestamp?: string | null
+          job_id?: string
+          name?: string | null
+          phone?: string | null
+          record_hash?: string | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      mark_expired_leads: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      job_status: "queued" | "processing" | "completed" | "failed"
+      lead_status:
+        | "pending"
+        | "valid"
+        | "invalid"
+        | "duplicate"
+        | "suppressed"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +345,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      job_status: ["queued", "processing", "completed", "failed"],
+      lead_status: [
+        "pending",
+        "valid",
+        "invalid",
+        "duplicate",
+        "suppressed",
+        "expired",
+      ],
+    },
   },
 } as const
