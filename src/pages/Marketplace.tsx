@@ -5,80 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Download, Eye, ShoppingCart, Star } from "lucide-react";
 
 export default function Marketplace() {
-  const leadPackages = [
-    {
-      id: 1,
-      title: "Healthcare Professionals - USA",
-      category: "Healthcare",
-      region: "North America",
-      quality: "Premium",
-      records: 5000,
-      price: 2500,
-      confidence: 98,
-      rating: 4.8,
-      sales: 127,
-    },
-    {
-      id: 2,
-      title: "Tech Startups - Europe",
-      category: "Technology",
-      region: "Europe",
-      quality: "Premium",
-      records: 3200,
-      price: 1920,
-      confidence: 96,
-      rating: 4.9,
-      sales: 89,
-    },
-    {
-      id: 3,
-      title: "Real Estate Agents - California",
-      category: "Real Estate",
-      region: "North America",
-      quality: "Standard",
-      records: 2500,
-      price: 1000,
-      confidence: 94,
-      rating: 4.6,
-      sales: 156,
-    },
-    {
-      id: 4,
-      title: "E-commerce Retailers - Global",
-      category: "E-commerce",
-      region: "Global",
-      quality: "Premium",
-      records: 8000,
-      price: 4800,
-      confidence: 97,
-      rating: 4.7,
-      sales: 203,
-    },
-    {
-      id: 5,
-      title: "Financial Services - Asia Pacific",
-      category: "Finance",
-      region: "Asia Pacific",
-      quality: "Standard",
-      records: 4200,
-      price: 1890,
-      confidence: 93,
-      rating: 4.5,
-      sales: 94,
-    },
-    {
-      id: 6,
-      title: "Legal Professionals - UK",
-      category: "Legal",
-      region: "Europe",
-      quality: "Premium",
-      records: 1800,
-      price: 1440,
-      confidence: 99,
-      rating: 4.9,
-      sales: 67,
-    },
-  ];
+  const leadPackages: any[] = [];
 
   const getQualityColor = (quality: string) => {
     return quality === "Premium" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground";
@@ -108,7 +35,16 @@ export default function Marketplace() {
 
       {/* Lead Packages Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {leadPackages.map((pkg) => (
+        {leadPackages.length === 0 ? (
+          <div className="col-span-full">
+            <Card className="shadow-card">
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <p className="text-muted-foreground">No lead packages available yet. Check back soon!</p>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          leadPackages.map((pkg) => (
           <Card key={pkg.id} className="shadow-card transition-shadow hover:shadow-elevated">
             <CardHeader>
               <div className="mb-2 flex items-start justify-between">
@@ -172,7 +108,8 @@ export default function Marketplace() {
               </div>
             </CardContent>
           </Card>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Info Card */}

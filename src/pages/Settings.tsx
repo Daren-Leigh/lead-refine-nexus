@@ -152,17 +152,7 @@ export default function Settings() {
               <CardDescription>Manage API keys for programmatic access</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="rounded-lg border border-border bg-secondary/30 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-mono text-sm">sk_live_4eC39HqLyjWDarjtT1zdp7dc</div>
-                    <div className="mt-1 text-xs text-muted-foreground">Created on Jan 15, 2025</div>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Revoke
-                  </Button>
-                </div>
-              </div>
+              <p className="text-center text-muted-foreground py-8">No API keys generated yet. Create one to get started with API access.</p>
               <Button>Generate New API Key</Button>
             </CardContent>
           </Card>

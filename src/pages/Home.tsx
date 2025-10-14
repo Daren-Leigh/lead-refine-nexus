@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   const stats = [
-    { label: "Total Leads Processed", value: "12,847", change: "+12.5%" },
-    { label: "Cleaned This Week", value: "1,234", change: "+8.2%" },
-    { label: "Leads Sold", value: "8,456", change: "+15.3%" },
-    { label: "Active Buyers", value: "127", change: "+5.1%" },
+    { label: "Total Leads Processed", value: "0", change: "+0%" },
+    { label: "Cleaned This Week", value: "0", change: "+0%" },
+    { label: "Leads Sold", value: "0", change: "+0%" },
+    { label: "Active Buyers", value: "0", change: "+0%" },
   ];
 
   const features = [

@@ -5,27 +5,15 @@ import { Download, TrendingUp, Users, DollarSign, Database } from "lucide-react"
 
 export default function Dashboard() {
   const agentMetrics = [
-    { label: "Total Leads Cleaned", value: "12,847", icon: Database, color: "text-primary" },
-    { label: "Invalid Emails Removed", value: "2,341", icon: TrendingUp, color: "text-destructive" },
-    { label: "Duplicates Found", value: "1,523", icon: Users, color: "text-warning" },
-    { label: "Revenue Generated", value: "$45,280", icon: DollarSign, color: "text-accent" },
+    { label: "Total Leads Cleaned", value: "0", icon: Database, color: "text-primary" },
+    { label: "Invalid Emails Removed", value: "0", icon: TrendingUp, color: "text-destructive" },
+    { label: "Duplicates Found", value: "0", icon: Users, color: "text-warning" },
+    { label: "Revenue Generated", value: "$0", icon: DollarSign, color: "text-accent" },
   ];
 
-  const recentActivity = [
-    { action: "Cleaned leads from contacts_batch_1.csv", count: 1425, time: "2 hours ago" },
-    { action: "Removed duplicates from march_export.xlsx", count: 245, time: "4 hours ago" },
-    { action: "Validated emails in new_contacts.csv", count: 892, time: "6 hours ago" },
-    { action: "Sold Healthcare Professionals package", count: 5000, time: "1 day ago" },
-    { action: "Enriched missing fields in tech_leads.csv", count: 123, time: "1 day ago" },
-  ];
+  const recentActivity: any[] = [];
 
-  const topCategories = [
-    { name: "Healthcare", leads: 5200, revenue: "$13,000" },
-    { name: "Technology", leads: 4100, revenue: "$12,300" },
-    { name: "Real Estate", leads: 3800, revenue: "$9,500" },
-    { name: "E-commerce", leads: 3200, revenue: "$8,000" },
-    { name: "Finance", leads: 2100, revenue: "$6,300" },
-  ];
+  const topCategories: any[] = [];
 
   return (
     <div className="space-y-6">
@@ -92,18 +80,22 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {recentActivity.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
-                    <div>
-                      <div className="font-medium">{item.action}</div>
-                      <div className="text-sm text-muted-foreground">{item.time}</div>
+                {recentActivity.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">No recent activity yet. Start by uploading some leads!</p>
+                ) : (
+                  recentActivity.map((item, index) => (
+                    <div key={index} className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
+                      <div>
+                        <div className="font-medium">{item.action}</div>
+                        <div className="text-sm text-muted-foreground">{item.time}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold">{item.count.toLocaleString()}</div>
+                        <div className="text-xs text-muted-foreground">records</div>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <div className="font-semibold">{item.count.toLocaleString()}</div>
-                      <div className="text-xs text-muted-foreground">records</div>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -191,20 +183,24 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {topCategories.map((category, index) => (
-                  <div key={category.name} className="flex items-center gap-4 rounded-lg border border-border bg-secondary/30 p-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-lg font-bold text-primary">
-                      {index + 1}
+                {topCategories.length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8">No sales data yet. Start selling lead packages to see performance!</p>
+                ) : (
+                  topCategories.map((category, index) => (
+                    <div key={category.name} className="flex items-center gap-4 rounded-lg border border-border bg-secondary/30 p-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-lg font-bold text-primary">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium">{category.name}</div>
+                        <div className="text-sm text-muted-foreground">{category.leads.toLocaleString()} leads sold</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold">{category.revenue}</div>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <div className="font-medium">{category.name}</div>
-                      <div className="text-sm text-muted-foreground">{category.leads.toLocaleString()} leads sold</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-xl font-bold">{category.revenue}</div>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>

@@ -5,49 +5,9 @@ import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, XCircle, AlertTriangle, Sparkles, Play } from "lucide-react";
 
 export default function Cleanup() {
-  const cleaningJobs = [
-    {
-      id: 1,
-      filename: "contacts_batch_1.csv",
-      status: "completed",
-      progress: 100,
-      totalRecords: 1500,
-      cleaned: 1425,
-      duplicates: 45,
-      invalid: 30,
-      confidence: 95,
-    },
-    {
-      id: 2,
-      filename: "leads_export_march.xlsx",
-      status: "processing",
-      progress: 67,
-      totalRecords: 2800,
-      cleaned: 1876,
-      duplicates: 0,
-      invalid: 0,
-      confidence: 0,
-    },
-    {
-      id: 3,
-      filename: "new_contacts.csv",
-      status: "queued",
-      progress: 0,
-      totalRecords: 950,
-      cleaned: 0,
-      duplicates: 0,
-      invalid: 0,
-      confidence: 0,
-    },
-  ];
+  const cleaningJobs: any[] = [];
 
-  const cleaningActions = [
-    { action: "Remove duplicate entries", count: 245 },
-    { action: "Standardize phone numbers (E.164)", count: 892 },
-    { action: "Validate email addresses", count: 1432 },
-    { action: "Fix capitalization issues", count: 567 },
-    { action: "Enrich missing fields", count: 123 },
-  ];
+  const cleaningActions: any[] = [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -73,7 +33,14 @@ export default function Cleanup() {
 
       {/* Cleaning Jobs */}
       <div className="space-y-4">
-        {cleaningJobs.map((job) => (
+        {cleaningJobs.length === 0 ? (
+          <Card className="shadow-card">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <p className="text-muted-foreground">No cleaning jobs yet. Upload leads to get started.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          cleaningJobs.map((job) => (
           <Card key={job.id} className="shadow-card">
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -149,7 +116,8 @@ export default function Cleanup() {
               </div>
             </CardContent>
           </Card>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Cleaning Actions Summary */}
@@ -160,12 +128,16 @@ export default function Cleanup() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {cleaningActions.map((item) => (
-              <div key={item.action} className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
-                <span className="text-sm font-medium">{item.action}</span>
-                <Badge variant="secondary">{item.count} records</Badge>
-              </div>
-            ))}
+            {cleaningActions.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4">No cleaning actions performed yet.</p>
+            ) : (
+              cleaningActions.map((item) => (
+                <div key={item.action} className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
+                  <span className="text-sm font-medium">{item.action}</span>
+                  <Badge variant="secondary">{item.count} records</Badge>
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
