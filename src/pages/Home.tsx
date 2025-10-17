@@ -60,7 +60,7 @@ export default function Home() {
             <Button asChild size="lg" variant="secondary">
               <Link to="/upload">Upload Leads</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
+            <Button asChild size="lg" variant="outline" className="bg-background border-primary text-primary hover:bg-primary hover:text-primary-foreground">
               <Link to="/marketplace">Browse Marketplace</Link>
             </Button>
           </div>
@@ -128,12 +128,6 @@ export default function Home() {
             <Link to="/marketplace">
               <ShoppingBag className="mr-2 h-4 w-4" />
               Browse Leads
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/dashboard">
-              <BarChart3 className="mr-2 h-4 w-4" />
-              View Analytics
             </Link>
           </Button>
         </CardContent>
