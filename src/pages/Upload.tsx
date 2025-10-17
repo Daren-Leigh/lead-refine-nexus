@@ -93,11 +93,11 @@ export default function Upload() {
 
       toast({
         title: "Upload successful",
-        description: `${file.name} is being processed. View progress in the Cleanup page.`,
+        description: `${file.name} uploaded. Review your data before cleaning.`,
       });
       
       setFile(null);
-      navigate('/cleanup');
+      navigate('/review');
       
     } catch (error: any) {
       console.error('Upload error:', error);

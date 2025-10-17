@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Settings, Database } from "lucide-react";
+import { Home, Settings, Database, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
+  { name: "Review Data", href: "/review", icon: FileText },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
