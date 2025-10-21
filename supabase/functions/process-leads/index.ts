@@ -118,8 +118,39 @@ async function processLeadsFile(
     console.log(`Starting background processing for job ${jobId}`);
     
     const fileContent = await file.text();
-    const parsedData = parse(fileContent, { skipFirstRow: true });
+    
+    // Validate file is not empty
+    if (!fileContent || fileContent.trim().length === 0) {
+      throw new Error('CSV file is empty');
+    }
+
+    // Parse CSV with error handling
+    let parsedData;
+    try {
+      parsedData = parse(fileContent, { skipFirstRow: true });
+    } catch (parseError) {
+      console.error('CSV parsing error:', parseError);
+      throw new Error('Failed to parse CSV file. Please ensure the file is properly formatted.');
+    }
+
     const records = parsedData as Array<Record<string, string | undefined>>;
+    
+    // Validate we have records
+    if (!records || records.length === 0) {
+      throw new Error('No data found in CSV file. Please ensure the file contains data rows.');
+    }
+    
+    // Validate required columns exist
+    const firstRecord = records[0];
+    const hasName = 'name' in firstRecord || 'Name' in firstRecord;
+    const hasEmail = 'email' in firstRecord || 'Email' in firstRecord;
+    const hasPhone = 'phone' in firstRecord || 'Phone' in firstRecord;
+    
+    if (!hasName && !hasEmail && !hasPhone) {
+      throw new Error('CSV must contain at least one of the following columns: name/Name, email/Email, phone/Phone');
+    }
+    
+    console.log(`Parsed ${records.length} records from CSV`);
 
     const stats: ProcessingStats = {
       total: records.length,
@@ -156,12 +187,24 @@ async function processLeadsFile(
     const cleanLeads: any[] = [];
 
     for (const record of records) {
+      // Skip completely empty rows
+      const isEmpty = Object.values(record).every(val => !val || val.trim() === '');
+      if (isEmpty) {
+        continue;
+      }
+
       const lead: LeadRecord = {
         name: record['name']?.trim() || record['Name']?.trim(),
         email: record['email']?.trim() || record['Email']?.trim(),
         phone: record['phone']?.trim() || record['Phone']?.trim(),
         company: record['company']?.trim() || record['Company']?.trim()
       };
+
+      // Skip if missing all required fields
+      if (!lead.name && !lead.email && !lead.phone) {
+        stats.invalid++;
+        continue;
+      }
 
       const recordHash = generateHash(lead.name || '', lead.email || '', lead.phone || '');
 
@@ -177,11 +220,12 @@ async function processLeadsFile(
         record_hash: recordHash
       });
 
-      // Validate format
-      const isEmailValid = validateEmail(lead.email || '');
-      const isPhoneValid = validatePhone(lead.phone || '');
+      // Validate format (at least one must be valid)
+      const isEmailValid = lead.email ? validateEmail(lead.email) : false;
+      const isPhoneValid = lead.phone ? validatePhone(lead.phone) : false;
+      const hasValidData = (lead.name && (isEmailValid || isPhoneValid));
 
-      if (!isEmailValid || !isPhoneValid) {
+      if (!hasValidData && !isEmailValid && !isPhoneValid) {
         stats.invalid++;
         continue;
       }
@@ -275,12 +319,14 @@ async function processLeadsFile(
   } catch (error) {
     console.error('Error processing leads file:', error);
     
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred during processing';
+    
     // Update job with error
     await supabase
       .from('cleaning_jobs')
       .update({
         status: 'failed',
-        error_message: (error as Error).message || 'Unknown error',
+        error_message: errorMessage,
         completed_at: new Date().toISOString()
       })
       .eq('id', jobId);

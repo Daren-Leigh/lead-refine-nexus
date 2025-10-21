@@ -29,26 +29,41 @@ export default function Upload() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      const validTypes = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
       
-      if (!validTypes.includes(selectedFile.type) && !selectedFile.name.match(/\.(csv|xlsx|xls)$/i)) {
+      // Validate file extension
+      if (!selectedFile.name.match(/\.(csv|xlsx|xls)$/i)) {
         toast({
           title: "Invalid file type",
-          description: "Please select a CSV or Excel file",
+          description: "Please select a CSV or Excel file (.csv, .xlsx, .xls)",
           variant: "destructive",
         });
+        e.target.value = ''; // Clear the input
         return;
       }
 
+      // Validate file size
       if (selectedFile.size > 50 * 1024 * 1024) {
         toast({
           title: "File too large",
           description: "Please select a file smaller than 50MB",
           variant: "destructive",
         });
+        e.target.value = ''; // Clear the input
         return;
       }
 
+      // Validate file is not empty
+      if (selectedFile.size === 0) {
+        toast({
+          title: "Empty file",
+          description: "The selected file is empty. Please choose a file with data.",
+          variant: "destructive",
+        });
+        e.target.value = ''; // Clear the input
+        return;
+      }
+
+      console.log('File selected:', selectedFile.name, `(${(selectedFile.size / 1024).toFixed(2)} KB)`);
       setFile(selectedFile);
     }
   };
@@ -82,6 +97,8 @@ export default function Upload() {
       formData.append('file', file);
       formData.append('source', source);
 
+      console.log('Invoking process-leads function...');
+      
       const { data, error } = await supabase.functions.invoke('process-leads', {
         body: formData,
         headers: {
@@ -89,7 +106,12 @@ export default function Upload() {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Function invocation error:', error);
+        throw error;
+      }
+
+      console.log('Processing started successfully:', data);
 
       toast({
         title: "Upload successful",
@@ -97,13 +119,21 @@ export default function Upload() {
       });
       
       setFile(null);
+      
+      // Clear file input
+      const fileInput = document.getElementById('file') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+      
       navigate('/cleanup');
       
     } catch (error: any) {
       console.error('Upload error:', error);
+      
+      const errorMessage = error.message || error.msg || "Failed to process file. Please try again.";
+      
       toast({
         title: "Upload failed",
-        description: error.message || "Failed to process file. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
