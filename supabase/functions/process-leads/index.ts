@@ -117,6 +117,12 @@ async function processLeadsFile(
   try {
     console.log(`Starting background processing for job ${jobId}`);
     
+    // Clear all existing data for this user before processing new upload
+    console.log(`Clearing existing data for user ${userId}`);
+    await supabase.from('clean_leads').delete().eq('user_id', userId);
+    await supabase.from('raw_leads').delete().eq('user_id', userId);
+    await supabase.from('cleaning_jobs').delete().eq('user_id', userId);
+    
     const fileContent = await file.text();
     
     // Validate file is not empty
