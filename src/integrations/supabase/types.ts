@@ -205,10 +205,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      mark_expired_leads: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      mark_expired_leads: { Args: never; Returns: undefined }
     }
     Enums: {
       job_status: "queued" | "processing" | "completed" | "failed"
