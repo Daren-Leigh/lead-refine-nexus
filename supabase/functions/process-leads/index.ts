@@ -214,14 +214,14 @@ async function processLeadsFile(
 
       const recordHash = generateHash(lead.name || '', lead.email || '', lead.phone || '');
 
-      // Store in raw_leads
+      // Store in raw_leads (with sanitization)
       rawLeads.push({
         job_id: jobId,
         user_id: userId,
-        name: lead.name,
-        email: lead.email,
-        phone: lead.phone,
-        company: lead.company,
+        name: sanitizeCSVValue(lead.name),
+        email: sanitizeCSVValue(lead.email),
+        phone: sanitizeCSVValue(lead.phone),
+        company: sanitizeCSVValue(lead.company),
         source: source,
         record_hash: recordHash
       });
@@ -260,14 +260,14 @@ async function processLeadsFile(
         stats.expired++;
       }
 
-      // Add to clean leads
+      // Add to clean leads (with sanitization)
       cleanLeads.push({
         job_id: jobId,
         user_id: userId,
-        name: lead.name,
-        email: lead.email,
-        phone: lead.phone,
-        company: lead.company,
+        name: sanitizeCSVValue(lead.name),
+        email: sanitizeCSVValue(lead.email),
+        phone: sanitizeCSVValue(lead.phone),
+        company: sanitizeCSVValue(lead.company),
         source: source,
         record_hash: recordHash,
         is_expired: isExpired,
@@ -337,6 +337,17 @@ async function processLeadsFile(
       })
       .eq('id', jobId);
   }
+}
+
+// Helper function to sanitize CSV values against formula injection
+function sanitizeCSVValue(value: string | null | undefined): string {
+  if (!value) return '';
+  const trimmed = value.trim();
+  // Neutralize dangerous formula prefixes by prepending single quote
+  if (trimmed.match(/^[=+\-@\t\r]/)) {
+    return "'" + trimmed;
+  }
+  return value;
 }
 
 function validateEmail(email: string): boolean {
