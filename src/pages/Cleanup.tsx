@@ -66,13 +66,24 @@ export default function Cleanup() {
 
       if (error) throw error;
 
+      // Sanitize CSV values to prevent formula injection
+      const sanitizeForCSV = (field: string | null | undefined): string => {
+        if (!field) return '';
+        const trimmed = field.trim();
+        // Neutralize dangerous formula prefixes
+        if (trimmed.match(/^[=+\-@\t\r]/)) {
+          return "'" + trimmed;
+        }
+        return field;
+      };
+
       // Convert to CSV
       const headers = ['Name', 'Email', 'Phone', 'Company', 'Source', 'Status'];
       const csvRows = [
         headers.join(','),
         ...data.map((lead: any) => 
           [lead.name, lead.email, lead.phone, lead.company, lead.source, lead.status]
-            .map(field => `"${field || ''}"`)
+            .map(field => `"${sanitizeForCSV(field)}"`)
             .join(',')
         )
       ];
