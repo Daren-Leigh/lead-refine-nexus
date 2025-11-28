@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Upload, Sparkles, ShoppingBag, BarChart3, Settings } from "lucide-react";
+import { Home, Upload, Sparkles, ShoppingBag, BarChart3, Settings, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -8,6 +8,7 @@ const navigation = [
   { name: "Lead Cleanup", href: "/cleanup", icon: Sparkles },
   { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
   { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+  { name: "Consent Admin", href: "/admin/consent", icon: Users },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
