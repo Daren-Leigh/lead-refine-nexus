@@ -131,6 +131,41 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          agent_used: string | null
+          created_at: string
+          id: string
+          lead_id: string
+          message: string
+          sender: Database["public"]["Enums"]["sender_type"]
+        }
+        Insert: {
+          agent_used?: string | null
+          created_at?: string
+          id?: string
+          lead_id: string
+          message: string
+          sender: Database["public"]["Enums"]["sender_type"]
+        }
+        Update: {
+          agent_used?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string
+          message?: string
+          sender?: Database["public"]["Enums"]["sender_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dnc_list: {
         Row: {
           added_at: string | null
@@ -155,6 +190,45 @@ export type Database = {
           id?: string
           phone?: string | null
           reason?: string | null
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          consent_status: Database["public"]["Enums"]["consent_status"]
+          consent_timestamp: string | null
+          created_at: string
+          email: string | null
+          id: string
+          latest_message: string | null
+          name: string | null
+          phone: string
+          surname: string | null
+          user_id: string
+        }
+        Insert: {
+          consent_status?: Database["public"]["Enums"]["consent_status"]
+          consent_timestamp?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          latest_message?: string | null
+          name?: string | null
+          phone: string
+          surname?: string | null
+          user_id: string
+        }
+        Update: {
+          consent_status?: Database["public"]["Enums"]["consent_status"]
+          consent_timestamp?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          latest_message?: string | null
+          name?: string | null
+          phone?: string
+          surname?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -208,6 +282,7 @@ export type Database = {
       mark_expired_leads: { Args: never; Returns: undefined }
     }
     Enums: {
+      consent_status: "pending" | "consented" | "denied"
       job_status: "queued" | "processing" | "completed" | "failed"
       lead_status:
         | "pending"
@@ -216,6 +291,7 @@ export type Database = {
         | "duplicate"
         | "suppressed"
         | "expired"
+      sender_type: "client" | "system" | "agent"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -343,6 +419,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      consent_status: ["pending", "consented", "denied"],
       job_status: ["queued", "processing", "completed", "failed"],
       lead_status: [
         "pending",
@@ -352,6 +429,7 @@ export const Constants = {
         "suppressed",
         "expired",
       ],
+      sender_type: ["client", "system", "agent"],
     },
   },
 } as const

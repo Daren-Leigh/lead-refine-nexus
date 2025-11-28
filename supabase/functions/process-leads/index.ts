@@ -297,6 +297,64 @@ async function processLeadsFile(
       if (cleanError) {
         console.error('Error inserting clean leads:', cleanError);
       }
+
+      // Create lead records for consent management
+      // Only create leads for records with phone numbers
+      const leadsForConsent = cleanLeads
+        .filter(lead => lead.phone)
+        .map(lead => {
+          const nameParts = lead.name?.split(' ') || [];
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts.slice(1).join(' ') || '';
+          
+          return {
+            user_id: userId,
+            name: firstName,
+            surname: lastName || null,
+            phone: lead.phone,
+            email: lead.email || null,
+            consent_status: 'pending' as const
+          };
+        });
+
+      if (leadsForConsent.length > 0) {
+        // Insert leads with upsert to handle duplicates
+        const { data: insertedLeads, error: leadsError } = await supabase
+          .from('leads')
+          .upsert(leadsForConsent, { 
+            onConflict: 'phone,user_id',
+            ignoreDuplicates: false 
+          })
+          .select();
+
+        if (leadsError) {
+          console.error('Error creating leads for consent:', leadsError);
+        } else if (insertedLeads) {
+          console.log(`Created ${insertedLeads.length} leads for consent management`);
+          
+          // Trigger consent requests for each lead
+          // Note: We're doing this async without blocking the main flow
+          for (const lead of insertedLeads) {
+            try {
+              // Call send-consent-request function
+              fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/send-consent-request`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
+                },
+                body: JSON.stringify({
+                  phone: lead.phone,
+                  leadId: lead.id,
+                  name: lead.name
+                })
+              }).catch(err => console.error('Error sending consent request:', err));
+            } catch (error) {
+              console.error('Error triggering consent request for lead:', lead.id, error);
+            }
+          }
+        }
+      }
     }
 
     // Calculate confidence score
