@@ -212,7 +212,7 @@ async function processLeadsFile(
         continue;
       }
 
-      const recordHash = generateHash(lead.name || '', lead.email || '', lead.phone || '');
+      const recordHash = await generateHash(lead.name || '', lead.email || '', lead.phone || '');
 
       // Store in raw_leads (with sanitization)
       rawLeads.push({
@@ -364,16 +364,17 @@ function normalizePhone(phone: string): string {
   return phone.replace(/\D/g, '');
 }
 
-function generateHash(name: string, email: string, phone: string): string {
+async function generateHash(name: string, email: string, phone: string): Promise<string> {
   const input = `${name.toLowerCase()}${email.toLowerCase()}${normalizePhone(phone)}`;
-  // Simple hash function (for production, consider using crypto)
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return Math.abs(hash).toString(36);
+  
+  // Use SHA-256 for collision-resistant hashing
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  return hashHex;
 }
 
 declare const EdgeRuntime: any;
