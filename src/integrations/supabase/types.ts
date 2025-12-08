@@ -131,6 +131,65 @@ export type Database = {
         }
         Relationships: []
       }
+      consent_ledger: {
+        Row: {
+          consent_prompted_at: string | null
+          consent_responded_at: string | null
+          consent_status:
+            | Database["public"]["Enums"]["ledger_consent_status"]
+            | null
+          consent_whatsapp: boolean | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          lead_id: string
+          phone_number: string
+          retry_count: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          consent_prompted_at?: string | null
+          consent_responded_at?: string | null
+          consent_status?:
+            | Database["public"]["Enums"]["ledger_consent_status"]
+            | null
+          consent_whatsapp?: boolean | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          lead_id: string
+          phone_number: string
+          retry_count?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          consent_prompted_at?: string | null
+          consent_responded_at?: string | null
+          consent_status?:
+            | Database["public"]["Enums"]["ledger_consent_status"]
+            | null
+          consent_whatsapp?: boolean | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          lead_id?: string
+          phone_number?: string
+          retry_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_ledger_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           agent_used: string | null
@@ -291,6 +350,12 @@ export type Database = {
         | "duplicate"
         | "suppressed"
         | "expired"
+      ledger_consent_status:
+        | "pending"
+        | "opted_in"
+        | "opted_out"
+        | "no_response"
+        | "failed"
       sender_type: "client" | "system" | "agent"
     }
     CompositeTypes: {
@@ -428,6 +493,13 @@ export const Constants = {
         "duplicate",
         "suppressed",
         "expired",
+      ],
+      ledger_consent_status: [
+        "pending",
+        "opted_in",
+        "opted_out",
+        "no_response",
+        "failed",
       ],
       sender_type: ["client", "system", "agent"],
     },
